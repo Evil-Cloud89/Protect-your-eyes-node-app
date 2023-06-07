@@ -9,6 +9,39 @@ class App extends React.Component {
     timer: null,
   }
 
+  formatTime(time) {
+    const minutes = Math.floor(time / 60);
+    const seconds = time - minutes * 60;
+  
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  }
+
+  startTimer = () => {
+    this.setState({
+      status: 'work',
+      time: 1200,
+      timer: setInterval(() => this.step(), 1000),
+    });
+  }
+  
+  step = () => {
+    this.setState((state) => {
+      const newState = { ...state };
+  
+      if (newState.time > 0) {
+        newState.time -= 1;
+      } else if (newState.status === 'work') {
+        newState.status = 'rest';
+        newState.time = 20;
+      } else {
+        newState.status = 'work';
+        newState.time = 1200;
+      }
+  
+      return newState;
+    });
+  };
+
   render() {
     
     const { status } = this.state;
@@ -26,10 +59,10 @@ class App extends React.Component {
         { status === 'rest' && (<img src="./images/rest.png" />)}
         { status !== 'off' && (
           <div className="timer">
-            18:23
+            {this.formatTime(this.state.time)}
           </div>
         )}
-        { status === 'off' && (<button className="btn">Start</button>)}
+        { status === 'off' && (<button className="btn" onClick={this.startTimer}>Start</button>)}
         { status !== 'off' && (<button className="btn">Stop</button>)}
         <button className="btn btn-close">X</button>
       </div>
